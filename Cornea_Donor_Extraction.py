@@ -1,20 +1,21 @@
 import streamlit as st
 import pandas as pd
-import fitz  # PyMuPDF
+import PyPDF2
 import re
 from io import BytesIO
 
-# Function to extract data from PDF using PyMuPDF
+# Function to extract data from PDF using PyPDF2
 def extract_data_from_pdf(pdf_file):
     extracted_values = {}
 
     try:
-        # Open the PDF file
-        pdf_document = fitz.open(stream=pdf_file, filetype="pdf")
+        # Initialize a PDF reader
+        pdf_reader = PyPDF2.PdfFileReader(pdf_file)
 
-        for page in pdf_document:
+        for page_num in range(pdf_reader.getNumPages()):
             # Extract text from the page
-            page_text = page.get_text("text")
+            page = pdf_reader.getPage(page_num)
+            page_text = page.extractText()
 
             # Regular expression patterns for extracting values
             patterns = {
@@ -53,6 +54,7 @@ def extract_data_from_pdf(pdf_file):
                 "EBV - Epstein-Barr (EB) Virus": r"EBV - Epstein-Barr \(EB\) Virus:\s?(?P<value>[\w\s]+)"
             }
 
+
             # Extract values using the patterns
             for field, pattern in patterns.items():
                 match = re.search(pattern, page_text, re.DOTALL | re.IGNORECASE)
@@ -84,3 +86,5 @@ if uploaded_files:
         excel_buffer.seek(0)
         st.write("### Download Excel File")
         st.download_button("Click to Download", excel_buffer, key="download_excel", file_name="data.xlsx")
+
+
