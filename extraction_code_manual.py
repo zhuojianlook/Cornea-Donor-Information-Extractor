@@ -51,6 +51,7 @@ def heuristic_extract_values_from_text(extracted_text):
     return extracted_values
 
 
+
 def refined_extract_tissue_id(layout_data, bbox):
     potential_values = []
     for entry in layout_data:
