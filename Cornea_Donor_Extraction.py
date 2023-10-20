@@ -27,11 +27,9 @@ def extract_data_from_pdf(pdf_file):
 
             # Regular expression patterns for other fields (unchanged)
             patterns = {
-                "Tissue ID": r"Tissue\s?ID[:#]?\s?(?P<value>[\d-]+\s?\w*)",  # Updated pattern
-                "DIN": r"DIN:\s?(?P<value>W\d{4}\s\d{2}\s\d{6})",
-                "Product Code": r"Product Code:\s?(?P<value>V\d{7})",
+                "Tissue ID": r"Tissue ID#?:\s?(?P<value>[\d-]+ LC)",
                 "Tissue Type": r"Tissue Type:\s?(?P<value>Cornea)",
-                "Donor Age": r"Donor\s?Age[:#]?\s?(?P<value>\d+)",  # Updated pattern
+                "Donor Age": r"Donor Age:\s?(?P<value>\d+)",
                 "Epithelium": r"Epithelium:\s?(?P<value>.+?)(?:\n|Descemet's)",
                 "Stroma": r"Stroma:\s?(?P<value>.+?)(?:\n|Endothelium)",
                 "Descemet's": r"Descemet's:\s?(?P<value>.+?)(?:\n|Endothelium)",
@@ -44,7 +42,7 @@ def extract_data_from_pdf(pdf_file):
                 "Ocular Cooling": r"Ocular Cooling:\s?(?P<value>[\d-]+\s[\d:]+)",
                 "Total": r"Total:\s?(?P<value>[\d:]+)",
                 "Storage Media": r"Storage Media:\s?(?P<value>[\w-]+)",
-                "Media Lot#": r"Media Lot#[:\s]?\s?(?P<value>[\d\w-]+)",
+                "Media Lot#": r"Media Lot#:\s?(?P<value>[\d-]+)",
                 "Approved Usages": r"Approved Usages:\s?(?P<value>.+?)(?:\n)",
                 "Lens Type": r"Lens Type:\s?(?P<value>[\w\s]+)",
                 "Testing Facility": r"Testing Facility:\s?(?P<value>VRL Eurofins)(?![\w\s])",
@@ -55,12 +53,13 @@ def extract_data_from_pdf(pdf_file):
                 "HBsAg": r"HBsAg:\s?(?P<value>\w+)",
                 "HIV 1&2 Ab": r"HIV 1&2 Ab:\s?(?P<value>\w+)",
                 "RPR": r"RPR:\s?(?P<value>\w+)",
-                "Recent hx": r"Recent hx:\s?(?P<value>.+?)(?:\n\n|\Z)",
+                "Recent hx": r"Recent hx:\s?(?P<value>.+?)(?:\n\n|\Z)"
                 "Sars-Cov-2": r"Sars-Cov-2:\s?(?P<value>[\w\s]+)",
                 "Antibodies to Cytomegalovirus (CMV)": r"Antibodies to Cytomegalovirus \(CMV\):\s?(?P<value>[\w\s]+)",
                 "Toxoplasma IgG": r"Toxoplasma IgG:\s?(?P<value>[\w\s]+)",
                 "EBV - Epstein-Barr (EB) Virus": r"EBV - Epstein-Barr \(EB\) Virus:\s?(?P<value>[\w\s]+)"
             }
+            
 
             # Iterate through lines on the page
             lines = page_text.split("\n")
@@ -70,12 +69,12 @@ def extract_data_from_pdf(pdf_file):
                     if match:
                         extracted_values[field] = match.group("value").strip()
 
-            # Special handling for "Tissue ID"
-            if not extracted_values["Tissue ID"]:
-                if "Tissue ID" in page_text:
-                    index = page_text.index("Tissue ID")
-                    value = page_text[index + len("Tissue ID"):].strip().split("\n")[0]
-                    extracted_values["Tissue ID"] = value
+            # # Special handling for "Tissue ID"
+            # if not extracted_values["Tissue ID"]:
+            #     if "Tissue ID" in page_text:
+            #         index = page_text.index("Tissue ID")
+            #         value = page_text[index + len("Tissue ID"):].strip().split("\n")[0]
+            #         extracted_values["Tissue ID"] = value
 
             # Continue to extract other fields here
 
