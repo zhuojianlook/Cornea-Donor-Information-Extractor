@@ -13,6 +13,7 @@ def extract_data_from_pdf(pdf_file):
         "Product Code": "",
         "Tissue Type": "",
         "Donor Age": "",
+        "Primary COD": "",  # Added "Primary COD" field
         # Add default values for other fields here
     }
 
@@ -69,18 +70,12 @@ def extract_data_from_pdf(pdf_file):
                     if match:
                         extracted_values[field] = match.group("value").strip()
 
-            # Special handling for "Tissue ID" and "Donor Age" based on their positions
+            # Special handling for "Tissue ID"
             if not extracted_values["Tissue ID"]:
                 if "Tissue ID" in page_text:
                     index = page_text.index("Tissue ID")
                     value = page_text[index + len("Tissue ID"):].strip().split("\n")[0]
                     extracted_values["Tissue ID"] = value
-
-            if not extracted_values["Donor Age"]:
-                if "Donor Age" in page_text:
-                    index = page_text.index("Donor Age")
-                    value = page_text[index + len("Donor Age"):].strip().split("\n")[0]
-                    extracted_values["Donor Age"] = value
 
             # Continue to extract other fields here
 
