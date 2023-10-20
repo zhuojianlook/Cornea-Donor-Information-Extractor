@@ -25,6 +25,7 @@ def extract_data_from_pdf(pdf_file):
             page_text = page.extract_text()
 
             # Regular expression patterns for extracting values
+
             patterns = {
                 "Tissue ID": r"Tissue\s?ID[:#]?\s?(?P<value>[\d-]+[\s\w]+)",
                 "DIN": r"DIN:\s?(?P<value>W\d{4}\s\d{2}\s\d{6})",
@@ -59,7 +60,9 @@ def extract_data_from_pdf(pdf_file):
                 "Antibodies to Cytomegalovirus (CMV)": r"Antibodies to Cytomegalovirus \(CMV\):\s?(?P<value>[\w\s]+)",
                 "Toxoplasma IgG": r"Toxoplasma IgG:\s?(?P<value>[\w\s]+)",
                 "EBV - Epstein-Barr (EB) Virus": r"EBV - Epstein-Barr \(EB\) Virus:\s?(?P<value>[\w\s]+)"
+        
             }
+                
 
             # Extract values using the patterns
             for field, pattern in patterns.items():
