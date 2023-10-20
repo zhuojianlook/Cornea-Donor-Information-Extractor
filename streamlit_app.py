@@ -21,8 +21,10 @@ def streamlit_app():
             extracted_values = hybrid_extract_values(layout_data, extracted_text)
             extracted_data_list.append(extracted_values)
 
+        # Debugging statement to check the content of extracted_data_list
+        st.write("Debug - Extracted Data List:", extracted_data_list)
+
         extracted_df = pd.DataFrame(extracted_data_list)
         st.write(extracted_df)
-
 
 streamlit_app()
