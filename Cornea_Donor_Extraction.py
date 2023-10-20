@@ -6,7 +6,15 @@ from io import BytesIO
 
 # Function to extract data from PDF using pdfplumber
 def extract_data_from_pdf(pdf_file):
-    extracted_values = {}
+    # Initialize a dictionary with default values for all fields
+    extracted_values = {
+        "Tissue ID": "",
+        "DIN": "",
+        "Product Code": "",
+        "Tissue Type": "",
+        "Donor Age": "",
+        # Add default values for other fields here
+    }
 
     try:
         # Initialize a PDF reader
@@ -16,7 +24,7 @@ def extract_data_from_pdf(pdf_file):
             # Extract text from the page
             page_text = page.extract_text()
 
-            # Regular expression patterns for extracting values (same as before)
+            # Regular expression patterns for extracting values
             patterns = {
                 "Tissue ID": r"Tissue\s?ID[:#]?\s?(?P<value>[\d-]+[\s\w]+)",
                 "DIN": r"DIN:\s?(?P<value>W\d{4}\s\d{2}\s\d{6})",
@@ -58,7 +66,8 @@ def extract_data_from_pdf(pdf_file):
                 match = re.search(pattern, page_text, re.DOTALL | re.IGNORECASE)
                 if match:
                     extracted_values[field] = match.group("value").strip()
-                    break
+
+            # Continue to extract other fields here
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")
