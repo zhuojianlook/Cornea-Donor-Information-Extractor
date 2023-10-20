@@ -25,7 +25,7 @@ def extract_data_from_pdf(pdf_file):
             page_text = page.extract_text()
 
             # Regular expression patterns for other fields (unchanged)
-             patterns = {
+        patterns = {
                 "Tissue ID": r"Tissue\s?ID[:#]?\s?(?P<value>[\d-]+\s?\w*)",  # Updated pattern
                 "DIN": r"DIN:\s?(?P<value>W\d{4}\s\d{2}\s\d{6})",
                 "Product Code": r"Product Code:\s?(?P<value>V\d{7})",
