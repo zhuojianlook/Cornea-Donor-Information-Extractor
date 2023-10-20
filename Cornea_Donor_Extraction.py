@@ -1,23 +1,22 @@
 import streamlit as st
 import pandas as pd
-import PyPDF2
+import pdfplumber
 import re
 from io import BytesIO
 
-# Function to extract data from PDF using PyPDF2
+# Function to extract data from PDF using pdfplumber
 def extract_data_from_pdf(pdf_file):
     extracted_values = {}
 
     try:
         # Initialize a PDF reader
-        pdf_reader = PyPDF2.PdfFileReader(pdf_file)
+        pdf = pdfplumber.open(pdf_file)
 
-        for page_num in range(pdf_reader.getNumPages()):
+        for page in pdf.pages:
             # Extract text from the page
-            page = pdf_reader.getPage(page_num)
-            page_text = page.extractText()
+            page_text = page.extract_text()
 
-            # Regular expression patterns for extracting values
+            # Regular expression patterns for extracting values (same as before)
             patterns = {
                 "Tissue ID": r"Tissue\s?ID[:#]?\s?(?P<value>[\d-]+[\s\w]+)",
                 "DIN": r"DIN:\s?(?P<value>W\d{4}\s\d{2}\s\d{6})",
@@ -54,7 +53,6 @@ def extract_data_from_pdf(pdf_file):
                 "EBV - Epstein-Barr (EB) Virus": r"EBV - Epstein-Barr \(EB\) Virus:\s?(?P<value>[\w\s]+)"
             }
 
-
             # Extract values using the patterns
             for field, pattern in patterns.items():
                 match = re.search(pattern, page_text, re.DOTALL | re.IGNORECASE)
@@ -86,5 +84,4 @@ if uploaded_files:
         excel_buffer.seek(0)
         st.write("### Download Excel File")
         st.download_button("Click to Download", excel_buffer, key="download_excel", file_name="data.xlsx")
-
 
