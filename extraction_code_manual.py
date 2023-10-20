@@ -24,31 +24,29 @@ def extract_layout_updated(pdf_path):
 
 
 def heuristic_extract_values_from_text(extracted_text):
-    # Define a dictionary of fields and their associated keywords/labels
-    fields = {
-        "Tissue ID": "Tissue ID#:",
-        "Tissue Type": "Tissue Type:",
-        "Donor Age": "Donor Age:",
-        "Donor Gender": "Donor Gender:",
-        "Donor Race": "Donor Race:",
-        # ... add other fields as needed
-    }
-    
+    # Define a mapping order based on the observed text order
+    fields_order = [
+        "Tissue ID", "Tissue Type", "Donor Age", "Donor Gender", "Donor Race",
+        "Primary COD", "Date-Time of Death", "Date-Time of In Situ", "Ocular Cooling", "Total",
+        "Storage Media", "Media Lot#", "Approved Usages", "Lens Type", "Epithelium",
+        "Stroma", "Descemet's", "Endothelium", "Testing Facility"
+    ]
+
+    # Create a dictionary to store the extracted values
     extracted_values = {}
-    
-    # Iterate over the fields and search for the associated keyword in the extracted text
-    for field, keyword in fields.items():
-        # Find the index of the keyword in the extracted text
-        try:
-            index = extracted_text.index(keyword)
-            # The value is usually the next item in the list after the keyword
-            value = extracted_text[index + 1]
-            extracted_values[field] = value
-        except ValueError:
-            # Keyword not found in the text
-            extracted_values[field] = None
+
+    # Loop through the fields_order to map the text to the fields
+    for i, field in enumerate(fields_order):
+        # Get the corresponding text based on the order
+        value = extracted_text[i]
+        
+        # Handle potential 'None' or 'N/A' values
+        value = None if value in ["N/A", "NA", "None"] else value
+        
+        extracted_values[field] = value
 
     return extracted_values
+
 
 
 
