@@ -25,41 +25,41 @@ def extract_data_from_pdf(pdf_file):
             page_text = page.extract_text()
 
             # Regular expression patterns for other fields (unchanged)
-        patterns = {
-                "Tissue ID": r"Tissue\s?ID[:#]?\s?(?P<value>[\d-]+\s?\w*)",  # Updated pattern
-                "DIN": r"DIN:\s?(?P<value>W\d{4}\s\d{2}\s\d{6})",
-                "Product Code": r"Product Code:\s?(?P<value>V\d{7})",
-                "Tissue Type": r"Tissue Type:\s?(?P<value>Cornea)",
-                "Donor Age": r"Donor\s?Age[:#]?\s?(?P<value>\d+)",  # Updated pattern
-                "Epithelium": r"Epithelium:\s?(?P<value>.+?)(?:\n|Descemet's)",
-                "Stroma": r"Stroma:\s?(?P<value>.+?)(?:\n|Endothelium)",
-                "Descemet's": r"Descemet's:\s?(?P<value>.+?)(?:\n|Endothelium)",
-                "Endothelium": r"Endothelium:\s?(?P<value>.+?)(?:\n|Ocular)",
-                "Donor Gender": r"Donor Gender:\s?(?P<value>\w+)",
-                "Donor Race": r"Donor Race:\s?(?P<value>\w+)",
-                "Primary COD": r"Primary COD:\s?(?P<value>CHF)(?![\w\s])",
-                "Date-Time of Death": r"Date-Time of Death:\s?(?P<value>[\d-]+\s[\d:]+)",
-                "Date-Time of In Situ": r"Date-Time of In Situ:\s?(?P<value>[\d-]+\s[\d:]+)",
-                "Ocular Cooling": r"Ocular Cooling:\s?(?P<value>[\d-]+\s[\d:]+)",
-                "Total": r"Total:\s?(?P<value>[\d:]+)",
-                "Storage Media": r"Storage Media:\s?(?P<value>[\w-]+)",
-                "Media Lot#": r"Media Lot#[:\s]?\s?(?P<value>[\d\w-]+)",
-                "Approved Usages": r"Approved Usages:\s?(?P<value>.+?)(?:\n)",
-                "Lens Type": r"Lens Type:\s?(?P<value>[\w\s]+)",
-                "Testing Facility": r"Testing Facility:\s?(?P<value>VRL Eurofins)(?![\w\s])",
-                "Endothelial Cell Density": r"Endothelial Cell Density:\s?(?P<value>\d+)",
-                "HBcAb (Total)": r"HBcAb \(Total\):\s?(?P<value>\w+)",
-                "HCV Ab": r"HCV Ab:\s?(?P<value>\w+)",
-                "HIV-1/HCV/HBV NAT (Ultrio)": r"HIV-1/HCV/HBV NAT \(Ultrio\):\s?(?P<value>\w+)",
-                "HBsAg": r"HBsAg:\s?(?P<value>\w+)",
-                "HIV 1&2 Ab": r"HIV 1&2 Ab:\s?(?P<value>\w+)",
-                "RPR": r"RPR:\s?(?P<value>\w+)",
-                "Recent hx": r"Recent hx:\s?(?P<value>.+?)(?:\n\n|\Z)",
-                "Sars-Cov-2": r"Sars-Cov-2:\s?(?P<value>[\w\s]+)",
-                "Antibodies to Cytomegalovirus (CMV)": r"Antibodies to Cytomegalovirus \(CMV\):\s?(?P<value>[\w\s]+)",
-                "Toxoplasma IgG": r"Toxoplasma IgG:\s?(?P<value>[\w\s]+)",
-                "EBV - Epstein-Barr (EB) Virus": r"EBV - Epstein-Barr \(EB\) Virus:\s?(?P<value>[\w\s]+)"
-            }
+                patterns = {
+                    "Tissue ID": r"Tissue\s?ID[:#]?\s?(?P<value>[\d-]+\s?\w*)",  # Updated pattern
+                    "DIN": r"DIN:\s?(?P<value>W\d{4}\s\d{2}\s\d{6})",
+                    "Product Code": r"Product Code:\s?(?P<value>V\d{7})",
+                    "Tissue Type": r"Tissue Type:\s?(?P<value>Cornea)",
+                    "Donor Age": r"Donor\s?Age[:#]?\s?(?P<value>\d+)",  # Updated pattern
+                    "Epithelium": r"Epithelium:\s?(?P<value>.+?)(?:\n|Descemet's)",
+                    "Stroma": r"Stroma:\s?(?P<value>.+?)(?:\n|Endothelium)",
+                    "Descemet's": r"Descemet's:\s?(?P<value>.+?)(?:\n|Endothelium)",
+                    "Endothelium": r"Endothelium:\s?(?P<value>.+?)(?:\n|Ocular)",
+                    "Donor Gender": r"Donor Gender:\s?(?P<value>\w+)",
+                    "Donor Race": r"Donor Race:\s?(?P<value>\w+)",
+                    "Primary COD": r"Primary COD:\s?(?P<value>CHF)(?![\w\s])",
+                    "Date-Time of Death": r"Date-Time of Death:\s?(?P<value>[\d-]+\s[\d:]+)",
+                    "Date-Time of In Situ": r"Date-Time of In Situ:\s?(?P<value>[\d-]+\s[\d:]+)",
+                    "Ocular Cooling": r"Ocular Cooling:\s?(?P<value>[\d-]+\s[\d:]+)",
+                    "Total": r"Total:\s?(?P<value>[\d:]+)",
+                    "Storage Media": r"Storage Media:\s?(?P<value>[\w-]+)",
+                    "Media Lot#": r"Media Lot#[:\s]?\s?(?P<value>[\d\w-]+)",
+                    "Approved Usages": r"Approved Usages:\s?(?P<value>.+?)(?:\n)",
+                    "Lens Type": r"Lens Type:\s?(?P<value>[\w\s]+)",
+                    "Testing Facility": r"Testing Facility:\s?(?P<value>VRL Eurofins)(?![\w\s])",
+                    "Endothelial Cell Density": r"Endothelial Cell Density:\s?(?P<value>\d+)",
+                    "HBcAb (Total)": r"HBcAb \(Total\):\s?(?P<value>\w+)",
+                    "HCV Ab": r"HCV Ab:\s?(?P<value>\w+)",
+                    "HIV-1/HCV/HBV NAT (Ultrio)": r"HIV-1/HCV/HBV NAT \(Ultrio\):\s?(?P<value>\w+)",
+                    "HBsAg": r"HBsAg:\s?(?P<value>\w+)",
+                    "HIV 1&2 Ab": r"HIV 1&2 Ab:\s?(?P<value>\w+)",
+                    "RPR": r"RPR:\s?(?P<value>\w+)",
+                    "Recent hx": r"Recent hx:\s?(?P<value>.+?)(?:\n\n|\Z)",
+                    "Sars-Cov-2": r"Sars-Cov-2:\s?(?P<value>[\w\s]+)",
+                    "Antibodies to Cytomegalovirus (CMV)": r"Antibodies to Cytomegalovirus \(CMV\):\s?(?P<value>[\w\s]+)",
+                    "Toxoplasma IgG": r"Toxoplasma IgG:\s?(?P<value>[\w\s]+)",
+                    "EBV - Epstein-Barr (EB) Virus": r"EBV - Epstein-Barr \(EB\) Virus:\s?(?P<value>[\w\s]+)"
+                }
 
             # Iterate through lines on the page
             lines = page_text.split("\n")
