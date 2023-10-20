@@ -53,7 +53,7 @@ def extract_data_from_pdf(pdf_file):
                 "HBsAg": r"HBsAg:\s?(?P<value>\w+)",
                 "HIV 1&2 Ab": r"HIV 1&2 Ab:\s?(?P<value>\w+)",
                 "RPR": r"RPR:\s?(?P<value>\w+)",
-                "Recent hx": r"Recent hx:\s?(?P<value>.+?)(?:\n\n|\Z)"
+                "Recent hx": r"Recent hx:\s?(?P<value>.+?)(?:\n\n|\Z)",
                 "Sars-Cov-2": r"Sars-Cov-2:\s?(?P<value>[\w\s]+)",
                 "Antibodies to Cytomegalovirus (CMV)": r"Antibodies to Cytomegalovirus \(CMV\):\s?(?P<value>[\w\s]+)",
                 "Toxoplasma IgG": r"Toxoplasma IgG:\s?(?P<value>[\w\s]+)",
