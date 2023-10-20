@@ -24,9 +24,8 @@ def extract_data_from_pdf(pdf_file):
             # Extract text from the page
             page_text = page.extract_text()
 
-            # Regular expression patterns for extracting values
-
-            patterns = {
+            # Regular expression patterns for other fields (unchanged)
+             patterns = {
                 "Tissue ID": r"Tissue\s?ID[:#]?\s?(?P<value>[\d-]+\s?\w*)",  # Updated pattern
                 "DIN": r"DIN:\s?(?P<value>W\d{4}\s\d{2}\s\d{6})",
                 "Product Code": r"Product Code:\s?(?P<value>V\d{7})",
@@ -62,13 +61,26 @@ def extract_data_from_pdf(pdf_file):
                 "EBV - Epstein-Barr (EB) Virus": r"EBV - Epstein-Barr \(EB\) Virus:\s?(?P<value>[\w\s]+)"
             }
 
-                
+            # Iterate through lines on the page
+            lines = page_text.split("\n")
+            for line in lines:
+                for field, pattern in patterns.items():
+                    match = re.search(pattern, line, re.DOTALL | re.IGNORECASE)
+                    if match:
+                        extracted_values[field] = match.group("value").strip()
 
-            # Extract values using the patterns
-            for field, pattern in patterns.items():
-                match = re.search(pattern, page_text, re.DOTALL | re.IGNORECASE)
-                if match:
-                    extracted_values[field] = match.group("value").strip()
+            # Special handling for "Tissue ID" and "Donor Age" based on their positions
+            if not extracted_values["Tissue ID"]:
+                if "Tissue ID" in page_text:
+                    index = page_text.index("Tissue ID")
+                    value = page_text[index + len("Tissue ID"):].strip().split("\n")[0]
+                    extracted_values["Tissue ID"] = value
+
+            if not extracted_values["Donor Age"]:
+                if "Donor Age" in page_text:
+                    index = page_text.index("Donor Age")
+                    value = page_text[index + len("Donor Age"):].strip().split("\n")[0]
+                    extracted_values["Donor Age"] = value
 
             # Continue to extract other fields here
 
@@ -77,7 +89,7 @@ def extract_data_from_pdf(pdf_file):
 
     return extracted_values
 
-# Streamlit interface
+# Streamlit interface (unchanged)
 st.title("PDF Data Extractor")
 
 uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
@@ -96,4 +108,3 @@ if uploaded_files:
         excel_buffer.seek(0)
         st.write("### Download Excel File")
         st.download_button("Click to Download", excel_buffer, key="download_excel", file_name="data.xlsx")
-
