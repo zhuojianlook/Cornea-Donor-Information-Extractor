@@ -37,13 +37,16 @@ def heuristic_extract_values_from_text(extracted_text):
 
     # Loop through the fields_order to map the text to the fields
     for i, field in enumerate(fields_order):
-        # Get the corresponding text based on the order
-        value = extracted_text[i]
-        
-        # Handle potential 'None' or 'N/A' values
-        value = None if value in ["N/A", "NA", "None"] else value
-        
-        extracted_values[field] = value
+        # Check if the index exists in extracted_text
+        if i < len(extracted_text):
+            value = extracted_text[i]
+            
+            # Handle potential 'None' or 'N/A' values
+            value = None if value in ["N/A", "NA", "None"] else value
+            
+            extracted_values[field] = value
+        else:
+            extracted_values[field] = None
 
     return extracted_values
 
