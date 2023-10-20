@@ -8,6 +8,7 @@ def extract_layout_updated(pdf_path):
         for element in page_layout:
             if isinstance(element, LTTextContainer):
                 text = element.get_text().strip()
+                st.write(f"Extracted Text: {text}")  # Add this line to print the text to Streamlit
                 for char in element:
                     if isinstance(char, LTChar):
                         layout_data.append({
@@ -19,6 +20,7 @@ def extract_layout_updated(pdf_path):
                         })
                         break
     return layout_data
+
 
 def final_refined_extract_values_from_regions(layout_data, bounding_boxes):
     extracted_values = {}
