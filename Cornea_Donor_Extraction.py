@@ -27,11 +27,11 @@ def extract_data_from_pdf(pdf_file):
             # Regular expression patterns for extracting values
 
             patterns = {
-                "Tissue ID": r"Tissue\s?ID[:#]?\s?(?P<value>[\d-]+[\s\w]+)",
+                "Tissue ID": r"Tissue\s?ID[:#]?\s?(?P<value>[\d-]+\s?\w*)",  # Updated pattern
                 "DIN": r"DIN:\s?(?P<value>W\d{4}\s\d{2}\s\d{6})",
                 "Product Code": r"Product Code:\s?(?P<value>V\d{7})",
                 "Tissue Type": r"Tissue Type:\s?(?P<value>Cornea)",
-                "Donor Age": r"Donor Age:\s?(?P<value>\d+)",
+                "Donor Age": r"Donor\s?Age[:#]?\s?(?P<value>\d+)",  # Updated pattern
                 "Epithelium": r"Epithelium:\s?(?P<value>.+?)(?:\n|Descemet's)",
                 "Stroma": r"Stroma:\s?(?P<value>.+?)(?:\n|Endothelium)",
                 "Descemet's": r"Descemet's:\s?(?P<value>.+?)(?:\n|Endothelium)",
@@ -60,8 +60,8 @@ def extract_data_from_pdf(pdf_file):
                 "Antibodies to Cytomegalovirus (CMV)": r"Antibodies to Cytomegalovirus \(CMV\):\s?(?P<value>[\w\s]+)",
                 "Toxoplasma IgG": r"Toxoplasma IgG:\s?(?P<value>[\w\s]+)",
                 "EBV - Epstein-Barr (EB) Virus": r"EBV - Epstein-Barr \(EB\) Virus:\s?(?P<value>[\w\s]+)"
-        
             }
+
                 
 
             # Extract values using the patterns
