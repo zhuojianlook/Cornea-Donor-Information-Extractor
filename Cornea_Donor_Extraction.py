@@ -60,7 +60,7 @@ def extract_data_from_pdf(pdf_path):
     return extracted_values
 
 # Streamlit interface
-st.title("PDF Data Extractor")
+st.title("Donor Cornea PDF Data Extractor")
 
 uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
 
