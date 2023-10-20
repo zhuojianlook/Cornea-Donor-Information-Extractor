@@ -23,32 +23,40 @@ def extract_layout_updated(pdf_path):
     return layout_data
 
 
-def heuristic_extract_values_from_text(extracted_text):
-    # Define a mapping order based on the observed text order
-    fields_order = [
-        "Tissue ID", "Tissue Type", "Donor Age", "Donor Gender", "Donor Race",
-        "Primary COD", "Date-Time of Death", "Date-Time of In Situ", "Ocular Cooling", "Total",
-        "Storage Media", "Media Lot#", "Approved Usages", "Lens Type", "Epithelium",
-        "Stroma", "Descemet's", "Endothelium", "Testing Facility"
-    ]
-
-    # Create a dictionary to store the extracted values
+def hybrid_extract_values(layout_data, extracted_text):
+    # Extract using bounding boxes
     extracted_values = {}
+    fields_for_bbox = ["Tissue ID", "Tissue Type", "Donor Age"]
+    for field in fields_for_bbox:
+        bbox = bounding_boxes_6436[field]
+        potential_values = []
+        distance_constraint = 80 if field in ["Epithelium", "Stroma", "Descemet's", "Endothelium"] else 150
+        for entry in layout_data:
+            if (entry["x0"] > bbox["x1"] and entry["x0"] - bbox["x1"] < distance_constraint and 
+                (entry["y0"] <= bbox["y1"] and entry["y1"] >= bbox["y0"]) and 
+                entry["x0"] > bbox["x1"]):
+                potential_values.append(entry["text"])
+        if potential_values:
+            combined_value = " ".join(potential_values)
+            extracted_values[field] = None if combined_value in ["N/A", "NA", "None"] else combined_value
 
-    # Loop through the fields_order to map the text to the fields
-    for i, field in enumerate(fields_order):
-        # Check if the index exists in extracted_text
-        if i < len(extracted_text):
-            value = extracted_text[i]
-            
-            # Handle potential 'None' or 'N/A' values
-            value = None if value in ["N/A", "NA", "None"] else value
-            
-            extracted_values[field] = value
-        else:
-            extracted_values[field] = None
+    # Extract using heuristic approach
+    heuristic_fields = [
+        "Donor Gender", "Donor Race", "Primary COD", "Date-Time of Death", 
+        "Date-Time of In Situ", "Ocular Cooling", "Total", "Storage Media", 
+        "Media Lot#", "Approved Usages", "Lens Type", "Epithelium", "Stroma", 
+        "Descemet's", "Endothelium", "Testing Facility"
+    ]
+    for i, field in enumerate(heuristic_fields):
+        extracted_values[field] = extracted_text[i + len(fields_for_bbox)]
 
     return extracted_values
+
+# Replace the previous call to extraction function in streamlit_app.py
+# extracted_values = heuristic_extract_values_from_text(extracted_text)
+# with:
+# extracted_values = hybrid_extract_values(layout_data, extracted_text)
+
 
 
 

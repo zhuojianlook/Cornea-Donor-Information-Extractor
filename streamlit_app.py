@@ -18,11 +18,11 @@ def streamlit_app():
             layout_data = extract_layout_updated(file_content)
             extracted_text = [entry["text"] for entry in layout_data]
             
-            extracted_values = heuristic_extract_values_from_text(extracted_text)
+            extracted_values = hybrid_extract_values(layout_data, extracted_text)
             extracted_data_list.append(extracted_values)
 
         extracted_df = pd.DataFrame(extracted_data_list)
         st.write(extracted_df)
 
-        
+
 streamlit_app()
