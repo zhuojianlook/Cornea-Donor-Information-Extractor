@@ -24,11 +24,8 @@ def extract_layout_updated(pdf_path):
 
 
 def hybrid_extract_values(layout_data, extracted_text):
-    # Extract using bounding boxes
     extracted_values = {}
-    fields_for_bbox = ["Tissue ID", "Tissue Type", "Donor Age"]
-    for field in fields_for_bbox:
-        bbox = bounding_boxes_6436[field]
+    for field, bbox in bounding_boxes_6436.items():
         potential_values = []
         distance_constraint = 80 if field in ["Epithelium", "Stroma", "Descemet's", "Endothelium"] else 150
         for entry in layout_data:
@@ -39,23 +36,11 @@ def hybrid_extract_values(layout_data, extracted_text):
         if potential_values:
             combined_value = " ".join(potential_values)
             extracted_values[field] = None if combined_value in ["N/A", "NA", "None"] else combined_value
-
-    # Extract using heuristic approach
-    heuristic_fields = [
-        "Donor Gender", "Donor Race", "Primary COD", "Date-Time of Death", 
-        "Date-Time of In Situ", "Ocular Cooling", "Total", "Storage Media", 
-        "Media Lot#", "Approved Usages", "Lens Type", "Epithelium", "Stroma", 
-        "Descemet's", "Endothelium", "Testing Facility"
-    ]
-    for i, field in enumerate(heuristic_fields):
-        index_to_access = i + len(fields_for_bbox)
-        if index_to_access < len(extracted_text):
-            extracted_values[field] = extracted_text[index_to_access]
         else:
-            extracted_values[field] = None  # or some default value
+            extracted_values[field] = None
             st.warning(f"Couldn't find value for field: {field}")
-
     return extracted_values
+
 
 def refined_extract_tissue_id(layout_data, bbox):
     potential_values = []
