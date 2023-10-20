@@ -48,18 +48,14 @@ def hybrid_extract_values(layout_data, extracted_text):
         "Descemet's", "Endothelium", "Testing Facility"
     ]
     for i, field in enumerate(heuristic_fields):
-        extracted_values[field] = extracted_text[i + len(fields_for_bbox)]
+        index_to_access = i + len(fields_for_bbox)
+        if index_to_access < len(extracted_text):
+            extracted_values[field] = extracted_text[index_to_access]
+        else:
+            extracted_values[field] = None  # or some default value
+            st.warning(f"Couldn't find value for field: {field}")
 
     return extracted_values
-
-# Replace the previous call to extraction function in streamlit_app.py
-# extracted_values = heuristic_extract_values_from_text(extracted_text)
-# with:
-# extracted_values = hybrid_extract_values(layout_data, extracted_text)
-
-
-
-
 
 def refined_extract_tissue_id(layout_data, bbox):
     potential_values = []
