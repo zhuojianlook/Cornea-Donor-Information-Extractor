@@ -1,5 +1,5 @@
 import streamlit as st
-from extraction_code_manual import extract_layout_updated, final_refined_extract_values_from_regions, refined_extract_tissue_id, bounding_boxes_6436
+from extraction_code_manual import extract_layout_updated, heuristic_extract_values_from_text, refined_extract_tissue_id, bounding_boxes_6436
 import pandas as pd
 import io
 

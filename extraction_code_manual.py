@@ -23,24 +23,33 @@ def extract_layout_updated(pdf_path):
     return layout_data
 
 
-def final_refined_extract_values_from_regions(layout_data, bounding_boxes):
+def heuristic_extract_values_from_text(extracted_text):
+    # Define a dictionary of fields and their associated keywords/labels
+    fields = {
+        "Tissue ID": "Tissue ID#:",
+        "Tissue Type": "Tissue Type:",
+        "Donor Age": "Donor Age:",
+        "Donor Gender": "Donor Gender:",
+        "Donor Race": "Donor Race:",
+        # ... add other fields as needed
+    }
+    
     extracted_values = {}
-    for field, bbox in bounding_boxes.items():
-        potential_values = []
-        distance_constraint = 80 if field in ["Epithelium", "Stroma", "Descemet's", "Endothelium"] else 150
-        for entry in layout_data:
-            if (entry["x0"] > bbox["x1"] and entry["x0"] - bbox["x1"] < distance_constraint and 
-                (entry["y0"] <= bbox["y1"] and entry["y1"] >= bbox["y0"]) and 
-                entry["x0"] > bbox["x1"]):
-                potential_values.append(entry["text"])
-        if field in ["Epithelium", "Stroma", "Descemet's", "Endothelium"]:
-            potential_values = [value for value in potential_values if value not in ["------", "-----", "----"]]
-        if field == "Testing Facility":
-            potential_values = potential_values[:1]
-        if potential_values:
-            combined_value = " ".join(potential_values)
-            extracted_values[field] = None if combined_value in ["N/A", "NA", "None"] else combined_value
+    
+    # Iterate over the fields and search for the associated keyword in the extracted text
+    for field, keyword in fields.items():
+        # Find the index of the keyword in the extracted text
+        try:
+            index = extracted_text.index(keyword)
+            # The value is usually the next item in the list after the keyword
+            value = extracted_text[index + 1]
+            extracted_values[field] = value
+        except ValueError:
+            # Keyword not found in the text
+            extracted_values[field] = None
+
     return extracted_values
+
 
 def refined_extract_tissue_id(layout_data, bbox):
     potential_values = []
