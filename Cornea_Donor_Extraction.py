@@ -7,7 +7,7 @@ import os
 from io import BytesIO
 from PIL import Image
 from tempfile import NamedTemporaryFile
-from openpyxl import Workbook
+from openpyxl import load_workbook
 from openpyxl.styles import Alignment
 
 # Function to extract data from PDF
@@ -98,8 +98,13 @@ if st.session_state['all_data'] and st.button("Generate Excel"):
     df.to_excel(buffer, index=False, engine="openpyxl")
     buffer.seek(0)
 
-    # Load the buffer into openpyxl
-    workbook = load_workbook(buffer)
+    # Write the buffer to a temporary file
+    with NamedTemporaryFile(delete=False, suffix='.xlsx') as tmp:
+        tmp.write(buffer.read())
+        tmp_path = tmp.name
+
+    # Load the workbook from the temporary file
+    workbook = load_workbook(tmp_path)
     worksheet = workbook.active
     for row in worksheet.iter_rows():
         for cell in row:
@@ -114,3 +119,5 @@ if st.session_state['all_data'] and st.button("Generate Excel"):
     st.write("### Download Excel File")
     st.download_button("Click to Download", output_buffer, "data.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
+    # Clean up the temporary file
+    os.remove(tmp_path)
