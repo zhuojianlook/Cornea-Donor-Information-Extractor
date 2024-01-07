@@ -45,18 +45,14 @@ def extract_data_from_pdf(pdf_path):
         "HBsAg": r"HBsAg:\s?(?P<value>\w+)",
         "HIV 1&2 Ab": r"HIV 1&2 Ab:\s?(?P<value>\w+)",
         "RPR": r"RPR:\s?(?P<value>\w+)",
-        "Recent hx": r"Recent hx:\s?(?P<value>.+?)(?:\n\n|\Z)",
-        "Sars-Cov-2": r"Sars-Cov-2:\s?(?P<value>[\w\s]+)",
-        "Antibodies to Cytomegalovirus (CMV)": r"Antibodies to Cytomegalovirus \(CMV\):\s?(?P<value>[\w\s]+)",
-        "Toxoplasma IgG": r"Toxoplasma IgG:\s?(?P<value>[\w\s]+)",
-        "EBV - Epstein-Barr (EB) Virus": r"EBV - Epstein-Barr \(EB\) Virus:\s?(?P<value>[\w\s]+)"
+        "Recent hx": r"Recent hx:\s?(?P<value>.+?)(?:\n\n|\Z)"
     }
 
     # Extract values using the patterns
     extracted_values = {}
     for field, pattern in patterns.items():
         for text in ocr_texts:
-            match = re.search(pattern, text, re.DOTALL | re.IGNORECASE)
+            match = re.search(pattern, text, re.DOTALL)
             if match:
                 extracted_values[field] = match.group("value").strip()
                 break
@@ -64,7 +60,7 @@ def extract_data_from_pdf(pdf_path):
     return extracted_values
 
 # Streamlit interface
-st.title("Cornea Donor Data Extractor")
+st.title("Donor Cornea PDF Data Extractor")
 
 uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
 

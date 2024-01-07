@@ -45,10 +45,14 @@ def extract_data_from_pdf(pdf_path):
         "HBsAg": r"HBsAg:\s?(?P<value>\w+)",
         "HIV 1&2 Ab": r"HIV 1&2 Ab:\s?(?P<value>\w+)",
         "RPR": r"RPR:\s?(?P<value>\w+)",
-        "Recent hx": r"Recent hx:\s?(?P<value>.+?)(?:\n\n|\Z)"
+        "Recent hx": r"Recent hx:\s?(?P<value>.+?)(?:\n\n|\Z)",
+        "Sars-Cov-2": r"Sars-Cov-2:\s?(?P<value>[\w\s]+)",
+        "Antibodies to Cytomegalovirus (CMV)": r"Antibodies to Cytomegalovirus \(CMV\):\s?(?P<value>[\w\s]+)",
+        "Toxoplasma IgG": r"Toxoplasma IgG:\s?(?P<value>[\w\s]+)",
+        "EBV - Epstein-Barr (EB) Virus": r"EBV - Epstein-Barr \(EB\) Virus:\s?(?P<value>[\w\s]+)"
     }
 
-    # Extract values using the patterns
+     # Extract values using the patterns
     extracted_values = {}
     for field, pattern in patterns.items():
         for text in ocr_texts:
@@ -62,26 +66,37 @@ def extract_data_from_pdf(pdf_path):
 # Streamlit interface
 st.title("Donor Cornea PDF Data Extractor")
 
+# Use Streamlit session state to store the extracted data
+if 'all_data' not in st.session_state:
+    st.session_state['all_data'] = []
+
 uploaded_files = st.file_uploader("Upload PDF files", type=["pdf"], accept_multiple_files=True)
 
+# Process each uploaded file
 if uploaded_files:
-    all_data = []
     for uploaded_file in uploaded_files:
-        # Create a temporary file to save the uploaded PDF
-        with st.spinner(f"Processing {uploaded_file.name}..."):
-            with NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
-                temp_file.write(uploaded_file.read())
-            data = extract_data_from_pdf(temp_file.name)
-            all_data.append(data)
+        # Check if file has already been processed
+        if uploaded_file.name not in [data.get('filename') for data in st.session_state['all_data']]:
+            with st.spinner(f"Processing {uploaded_file.name}..."):
+                with NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+                    temp_file.write(uploaded_file.read())
+                data = extract_data_from_pdf(temp_file.name)
+                # Add filename to the data for tracking
+                data['filename'] = uploaded_file.name
+                st.session_state['all_data'].append(data)
 
-    if st.button("Generate Excel"):
-        df = pd.DataFrame(all_data)
+# Generate Excel button
+if st.session_state['all_data'] and st.button("Generate Excel"):
+    df = pd.DataFrame(st.session_state['all_data'])
+    # Drop the filename column before creating Excel file
+    df.drop(columns=['filename'], inplace=True)
 
-        # Save the DataFrame to an in-memory Excel file
-        excel_buffer = BytesIO()
-        df.to_excel(excel_buffer, index=False, engine="openpyxl")
-        excel_buffer.seek(0)
+    # Save the DataFrame to an in-memory Excel file
+    excel_buffer = BytesIO()
+    df.to_excel(excel_buffer, index=False, engine="openpyxl")
+    excel_buffer.seek(0)
 
-        # Offer the Excel file for download
-        st.write("### Download Excel File")
-        st.download_button("Click to Download", excel_buffer, key="download_excel", file_name="data.xlsx")
+    # Offer the Excel file for download
+    st.write("### Download Excel File")
+    st.download_button("Click to Download", excel_buffer, key="download_excel", file_name="data.xlsx")
+
