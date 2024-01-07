@@ -7,6 +7,8 @@ import os
 from io import BytesIO
 from PIL import Image
 from tempfile import NamedTemporaryFile
+from openpyxl import Workbook
+from openpyxl.styles import Alignment
 
 # Function to extract data from PDF
 def extract_data_from_pdf(pdf_path):
@@ -91,12 +93,25 @@ if st.session_state['all_data'] and st.button("Generate Excel"):
     # Drop the filename column before creating Excel file
     df.drop(columns=['filename'], inplace=True)
 
-    # Save the DataFrame to an in-memory Excel file
-    excel_buffer = BytesIO()
-    df.to_excel(excel_buffer, index=False, engine="openpyxl")
+    # Create an ExcelWriter with openpyxl engine
+    excel_writer = pd.ExcelWriter(excel_buffer, engine='openpyxl')
+
+    # Write the dataframe to the ExcelWriter
+    df.to_excel(excel_writer, index=False)
+
+    # Apply text wrap format to each cell
+    workbook = excel_writer.book
+    worksheet = excel_writer.sheets['Sheet1']
+    for row in worksheet.iter_rows():
+        for cell in row:
+            cell.alignment = Alignment(wrap_text=True)
+
+    # Save the workbook
+    excel_writer.save()
     excel_buffer.seek(0)
 
     # Offer the Excel file for download
     st.write("### Download Excel File")
     st.download_button("Click to Download", excel_buffer, key="download_excel", file_name="data.xlsx")
+
 
