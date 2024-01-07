@@ -93,26 +93,24 @@ if st.session_state['all_data'] and st.button("Generate Excel"):
     # Drop the filename column before creating Excel file
     df.drop(columns=['filename'], inplace=True)
 
-    # Save the DataFrame to a temporary Excel file
-    with NamedTemporaryFile(delete=False, suffix=".xlsx") as tmp:
-        df.to_excel(tmp.name, index=False, engine="openpyxl")
+    # Save the DataFrame to a BytesIO buffer
+    buffer = BytesIO()
+    df.to_excel(buffer, index=False, engine="openpyxl")
+    buffer.seek(0)
 
-        # Apply text wrap format to each cell
-        workbook = load_workbook(tmp.name)
-        worksheet = workbook.active
-        for row in worksheet.iter_rows():
-            for cell in row:
-                cell.alignment = Alignment(wrap_text=True)
+    # Load the buffer into openpyxl
+    workbook = load_workbook(buffer)
+    worksheet = workbook.active
+    for row in worksheet.iter_rows():
+        for cell in row:
+            cell.alignment = Alignment(wrap_text=True)
 
-        # Save the modified workbook to the buffer
-        excel_buffer = BytesIO()
-        workbook.save(excel_buffer)
-        excel_buffer.seek(0)
+    # Save the modified workbook to a new BytesIO buffer
+    output_buffer = BytesIO()
+    workbook.save(output_buffer)
+    output_buffer.seek(0)
 
     # Offer the Excel file for download
     st.write("### Download Excel File")
-    st.download_button("Click to Download", excel_buffer, "data.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-
-    # Ensure temporary file is deleted
-    os.remove(tmp.name)
+    st.download_button("Click to Download", output_buffer, "data.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
